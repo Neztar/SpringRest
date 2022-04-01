@@ -1,27 +1,13 @@
-####
-# This Dockerfile is used in order to build a container that runs the Spring Boot application
-#
-# Build the image with:
-#
-# docker build -f docker/Dockerfile -t springboot/sample-SpringRest-0.0.1-SNAPSHOT.jar.original .
-#
-# Then run the container using:
-#
-# docker run -i --rm -p 8081:8081 springboot/sample-SpringRest-0.0.1-SNAPSHOT.jar.original
-####
-FROM maven:3.8.4-openjdk-8-slim
+FROM openjdk:8-jdk-alpine
 
-WORKDIR /build
+RUN mvn clean package -Dmaven.test.skip=true
 
-# Build dependency offline to streamline build
-COPY pom.xml .
-RUN mvn dependency:go-offline
+ARG JAR_FILE=target/SpringRest-0.0.1-SNAPSHOT.jar
 
-COPY src src
-RUN mvn package -Dmaven.test.skip=true
+WORKDIR /opt/app
 
-FROM openjdk:11-jdk
-COPY --from=0 /build/target/SpringRest-0.0.1-SNAPSHOT.jar.original-0.0.1-SNAPSHOT.jar /app/target/SpringRest-0.0.1-SNAPSHOT.jar.original-0.0.1-SNAPSHOT.jar
+COPY ${JAR_FILE} app.jar
 
 EXPOSE 8081
-ENTRYPOINT [ "java", "-jar", "/app/target/SpringRest-0.0.1-SNAPSHOT.jar.original-0.0.1-SNAPSHOT.jar", "--server.port=8081" ]
+
+ENTRYPOINT ["java","-jar","app.jar"]
