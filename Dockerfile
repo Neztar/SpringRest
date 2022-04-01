@@ -9,7 +9,7 @@
 #
 # docker run -i --rm -p 8081:8081 springboot/sample-SpringRest-0.0.1-SNAPSHOT.jar.original
 ####
-FROM maven:3.8.1-openjdk-17-slim
+FROM maven:3.8.4-openjdk-8-slim
 
 WORKDIR /build
 
